@@ -1,0 +1,176 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>The HTML5 Herald</title>
+    <meta name="description" content="The HTML5 Herald">
+    <meta name="Singh" content="SitePoint">
+
+    <link rel="stylesheet" href="./style.css">
+    <script defer src="../dist/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jksarpanch/pni-wizard@1.0.53/dist/index.js"></script>  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jksarpanch/pni-wizard@1.0.53/dist/style.css">
+    <!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <!-- <script src="./pni-wizard-lib.js"></script> -->
+</head>
+
+<body>
+    <h1>Hello</h1>
+    <button onclick="PniWizard.replacePage()">Open Wizard</button>
+    <div id='pni-shopify-widget'></div>
+    <!-- <button onclick="PniWizard.showNextQuestion()">Next question</button> -->
+    <!-- <button onclick="PniWizard.resetInteractiveWizard()">Reset</button> -->
+    <div class="pni-wizard" id="pni-interactive-wizard" positioning='true' top='10%' right='5%' left="10%"></div>
+    <!-- <Analytics-Wizard positioning='true' top='10%' right='3%' left="10%" color='rgb(60, 60, 60)'></Analytics-Wizard>     -->
+    
+    <div>
+            <div class="text-center"></div>
+              <h1>{{ page.title }}</h1>
+            </div>
+      
+            <div class="row" id="product-list"  style="max-width:1200px;margin: 0 auto;"></div>
+          </div>
+        </div>
+        <div class="pagination">
+            <a id='btn_prev' href="javascript:prevPage()">&laquo;</a>
+            <a href="#">1</a>
+            <a class="active" href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <a href="#">5</a>
+            <a href="#">6</a>
+            <a id='btn_next' href="javascript:nextPage()">&raquo;</a>
+          </div>
+          page: <span id="page"></span>
+        <!-- <script>
+            var jsonData;
+            var apiUrl = 'https://pni-dev-p2p-web-api.pnidev.com/api/shopify/getproducts/';
+        
+            function updateProducts(newData) {
+                let orderList = document.querySelector('#product-list')
+                orderList.innerHTML ='';
+                for (var i = 0; i < newData.length; i++) {
+                    var product = newData[i];
+                    var imageUrl = product.image.src;
+                    var sortedVariants = product.variants.sort(function (a, b) {
+                        return parseFloat(a.price) - parseFloat(b.price);
+                    });
+                    var productCard = '<div class="col-md-3 col-6">' +
+                        '  <div class="grid-view-item product-card">' +
+                        '       <a style="border: none!important" href="/collections/all/products/' + product.handle + '">' +
+                        '       <div class="">' +
+                        '           <div id="ProductCardImageWrapper-collection-template-' + product.id + '">' +
+                        '               <div>' +
+                        '                   <img id="ProductCardImage-collection-template-6256811114678" class="" alt="" ' +
+                        '                    src="' + imageUrl + '" />' +
+                        '               </div>' +
+                        '           </div>' +
+                        '       </div>' +
+                        '       <div class="h4">' + product.title + '</div>' +
+                        '       <div>' + sortedVariants[0].price + '</div>  '
+                        '  </div></a>' +
+                        '</div>'
+                    orderList.insertAdjacentHTML("beforeend", productCard);
+                }
+            }
+            function fetchProduct(handleIds) {
+                
+                if (handleIds) {
+                    for(var i=0; i<handleIds.length; i++){
+                        handleIds[i] = handleIds[i].toString();
+                    }
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        body: JSON.stringify({ "handleIds": handleIds })
+                    }).then(function (response) {
+                        return response.json();            
+                    }).then(function (data) {
+                        updateProducts(data)
+                    }).catch((error) => {
+                        console.error('Error:', error);
+                    });
+                }
+                else {
+                    fetch(apiUrl, {
+                        method: 'Get'
+                    }).then(function (response) {
+                        return response.json();
+                    }).then(function (data) {
+                        updateProducts(data)
+                    }).catch((error) => {
+                        console.error('Error:', error);
+                    });
+                    
+                }
+            }
+            function displayProducts(productIds) {
+                fetchProduct(productIds);
+            }
+        
+            setTimeout(function () {
+                PniWizard.openInteractiveWizard();
+                PniWizard.configureWizard(displayProducts = displayProducts);
+                fetchProduct()
+            }, 2000)
+            
+        
+        // Pagination
+        var current_page = 1;
+        var records_per_page = 20;
+        function prevPage()
+        {
+            if (current_page > 1) {
+                current_page--;
+                changePage(current_page);
+            }
+        }
+        
+        function nextPage()
+        {
+            if (current_page < numPages()) {
+                current_page++;
+                changePage(current_page);
+            }
+        }
+        
+        function changePage(page)
+        {
+            var btn_next = document.getElementById("btn_next");
+            var btn_prev = document.getElementById("btn_prev");
+            var page_span = document.getElementById("page");
+         
+            // Validate page
+            if (page < 1) page = 1;
+            if (page > numPages()) page = numPages();
+        
+           
+            page_span.innerHTML = page;
+        
+            if (page == 1) {
+                btn_prev.style.visibility = "hidden";
+            } else {
+                btn_prev.style.visibility = "visible";
+            }
+        
+            if (page == numPages()) {
+                btn_next.style.visibility = "hidden";
+            } else {
+                btn_next.style.visibility = "visible";
+           
+            }
+        }
+        function numPages()
+        {
+            return Math.ceil(100 / records_per_page);
+        }
+        changePage(1)
+        </script> -->
+        
+      </div>
+     
+</body>
+</html>
